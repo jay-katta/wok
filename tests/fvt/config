@@ -1,7 +1,7 @@
 [Session]
 user : root
 passwd : pass4root
-host : localhost
+host : 9.152.151.106
 port : 8001
 logfile : kimchi-api-test-suite.log
 loglevel : DEBUG
