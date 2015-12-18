@@ -20,6 +20,7 @@ Requires:	nginx
 Requires:	python-psutil >= 0.6.0
 Requires:	fontawesome-fonts
 Requires:	google-opensans-fonts
+BuildRequires:	gettext-tools
 BuildRequires:	libxslt-tools
 BuildRequires:	openssl
 BuildRequires:	python-lxml
@@ -103,14 +104,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_unitdir}/wokd.service
 %else
 %{_initrddir}/wokd
-%endif
-
-
-
-%if 0%{?with_systemd}
-%{_unitdir}/kimchid.service
-%else
-%{_initrddir}/kimchid
 %endif
 
 
