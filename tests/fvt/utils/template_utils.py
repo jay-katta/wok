@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301USA
 
 from tests.fvt.utils import utils
-template_uri = '/templates/'
+template_uri = '/plugins/kimchi/templates/'
 default_template_name = 'test_template'
 
 
