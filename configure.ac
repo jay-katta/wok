@@ -51,12 +51,6 @@ if test "x$PYFLAKES" = "x"; then
   AC_MSG_WARN([pyflakes not found])
 fi
 
-# Checking for libsass
-AC_PATH_PROG([LIBSASS], [sassc])
-if test "x$LIBSASS" = "x"; then
-    AC_MSG_ERROR([sassc not found. Please execute "pip install libsass"])
-fi
-
 AC_ARG_ENABLE(
     [sample],
     [AS_HELP_STRING(
@@ -125,6 +119,18 @@ AC_CONFIG_FILES([
     ui/libs/bootstrap-select/dist/Makefile
     ui/libs/bootstrap-select/dist/js/Makefile
     ui/libs/bootstrap-select/dist/css/Makefile
+    ui/libs/jquery-bootgrid/Makefile
+    ui/libs/jquery-bootgrid/dist/Makefile
+    ui/libs/jquery-bootgrid/dist/js/Makefile
+    ui/libs/jquery-bootgrid/dist/css/Makefile
+    ui/libs/bootstrap-switch/Makefile
+    ui/libs/bootstrap-switch/dist/Makefile
+    ui/libs/bootstrap-switch/dist/js/Makefile
+    ui/libs/bootstrap-switch/dist/css/Makefile
+    ui/libs/bootstrap-editable/Makefile
+    ui/libs/bootstrap-editable/dist/Makefile
+    ui/libs/bootstrap-editable/dist/js/Makefile
+    ui/libs/bootstrap-editable/dist/css/Makefile
     ui/libs/es5-shim/Makefile
     ui/libs/jquery/Makefile
     ui/libs/jquery-i18n/Makefile
