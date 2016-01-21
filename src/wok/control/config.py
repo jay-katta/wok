@@ -1,9 +1,7 @@
 #
 # Project Wok
 #
-# Copyright IBM Corp, 2013-2016
-#
-# Code derived from Project Kimchi
+# Copyright IBM, Corp. 2016
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,12 +15,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = API
+from wok.control.base import Resource
+from wok.control.utils import UrlSubNode
 
-docdir = $(datadir)/wok/doc
 
-dist_doc_DATA = $(wildcard *.md) wokd.8 $(NULL)
+@UrlSubNode("config")
+class Config(Resource):
+    def __init__(self, model, id=None):
+        super(Config, self).__init__(model, id)
 
-CLEANFILES = wokd.8
+    @property
+    def data(self):
+        return self.info

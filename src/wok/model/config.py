@@ -1,9 +1,7 @@
 #
 # Project Wok
 #
-# Copyright IBM Corp, 2013-2016
-#
-# Code derived from Project Kimchi
+# Copyright IBM, Corp. 2016
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,12 +15,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = API
+from wok.config import config as kconfig
+from wok.config import get_version
 
-docdir = $(datadir)/wok/doc
 
-dist_doc_DATA = $(wildcard *.md) wokd.8 $(NULL)
+class ConfigModel(object):
+    def __init__(self, **kargs):
+        pass
 
-CLEANFILES = wokd.8
+    def lookup(self, name):
+        ssl_port = kconfig.get('server', 'ssl_port')
+        websockets_port = kconfig.get('server', 'websockets_port')
+
+        return {'ssl_port': ssl_port,
+                'websockets_port': websockets_port,
+                'version': get_version()}

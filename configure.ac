@@ -90,6 +90,7 @@ AC_CONFIG_FILES([
     Makefile
     docs/Makefile
     docs/wokd.8
+    docs/API/Makefile
     src/Makefile
     src/nginx/Makefile
     src/wok/Makefile
@@ -140,7 +141,6 @@ AC_CONFIG_FILES([
     ui/libs/list-js/Makefile
     ui/libs/typeahead/Makefile
     ui/pages/Makefile
-    ui/pages/websockify/Makefile
     contrib/Makefile
     contrib/DEBIAN/Makefile
     contrib/DEBIAN/control
