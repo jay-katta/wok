@@ -1,8 +1,8 @@
 #!/bin/bash
-#
+
 # Project Wok
 #
-# Copyright IBM Corp, 2013-2016
+# Copyright IBM Corp, 2016
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,38 +18,24 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-HAVE_UNITTEST=@HAVE_PYMOD_UNITTEST@
-PYTHON_VER=@PYTHON_VERSION@
-
-if [ "$1" = "-v" ]; then
-    OPTS="-v"
-    shift
-else
-    OPTS=""
+IGNORE_FILES=" "
+if [ -f ./IBM-license-blacklist ]; then
+    IGNORE_FILES=$(cat ./IBM-license-blacklist)
 fi
 
-if [ $# -ne 0 ]; then
-    ARGS="$@"
-else
-    ARGS=`find -name "test_*.py" | xargs -I @ basename @ .py`
-fi
+for FILE in $(git grep --cached -Il '' | grep -v "$IGNORE_FILES" | grep -v check-IBM-license-header.sh | grep -v IBM-license-blacklist)
+do
 
-if [ "$HAVE_UNITTEST" != "yes" -o "$PYTHON_VER" == "2.6" ]; then
-    CMD="unit2"
-else
-    CMD="python -m unittest"
-fi
+    grep -q "Copyright IBM.*Corp.*" $FILE
+    if [ $? -ne 0 ]; then
+        echo "License header missing for" $FILE
+    fi
 
-LIST=($ARGS)
-MODEL_LIST=()
-MOCK_LIST=()
-for ((i=0;i<${#LIST[@]};i++)); do
-
-    if [[ ${LIST[$i]} == test_model* ]]; then
-        MODEL_LIST+=(${LIST[$i]})
+    FIRST=$(git log --pretty=format:%cd --date=short $FILE | cut -d - -f 1 | sort | uniq | head -1)
+    LAST=$(git log --pretty=format:%cd --date=short $FILE | cut -d - -f 1 | sort | uniq | tail -1)
+    if [ $FIRST -eq $LAST ]; then
+        sed -i s/" Copyright.*IBM.*"/" Copyright IBM Corp, "$FIRST/g $FILE
     else
-        MOCK_LIST+=(${LIST[$i]})
+        sed -i s/" Copyright.*IBM.*"/" Copyright IBM Corp, "$FIRST"-"$LAST/g $FILE
     fi
 done
-
-PYTHONPATH=../src:../ $CMD $OPTS ${MODEL_LIST[@]} ${MOCK_LIST[@]}
