@@ -35,6 +35,7 @@ from wok.control import sub_nodes
 from wok.model import model
 from wok.proxy import start_proxy, terminate_proxy
 from wok.root import WokRoot
+from wok.safewatchedfilehandler import SafeWatchedFileHandler
 from wok.utils import get_enabled_plugins, import_class
 
 LOGGING_LEVEL = {"debug": logging.DEBUG,
@@ -101,6 +102,17 @@ class Server(object):
         if dev_env:
             cherrypy.log.screen = True
 
+        # close standard file handlers because we are going to use a
+        # watchedfiled handler, otherwise we will have two file handlers
+        # pointing to the same file, duplicating log enries
+        for handler in cherrypy.log.access_log.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                cherrypy.log.access_log.removeHandler(handler)
+
+        for handler in cherrypy.log.error_log.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                cherrypy.log.error_log.removeHandler(handler)
+
         # Create handler to access log file
         h = logging.handlers.WatchedFileHandler(options.access_log, 'a',
                                                 delay=1)
@@ -111,8 +123,7 @@ class Server(object):
         cherrypy.log.access_log.addHandler(h)
 
         # Create handler to error log file
-        h = logging.handlers.WatchedFileHandler(options.error_log, 'a',
-                                                delay=1)
+        h = SafeWatchedFileHandler(options.error_log, 'a', delay=1)
         h.setLevel(logLevel)
         h.setFormatter(cherrypy._cplogging.logfmt)
 
