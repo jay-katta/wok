@@ -21,6 +21,7 @@
 #
 
 import cherrypy
+import glob
 import grp
 import os
 import psutil
@@ -31,7 +32,9 @@ import subprocess
 import sys
 import traceback
 import xml.etree.ElementTree as ET
+
 from cherrypy.lib.reprconf import Parser
+from datetime import datetime, timedelta
 from multiprocessing import Process, Queue
 from threading import Timer
 
@@ -118,6 +121,18 @@ def get_all_tabs():
         tabs.extend([t.text.lower() for t in root.getiterator('title')])
 
     return tabs
+
+
+def get_plugin_from_request():
+    """
+    Returns name of plugin being requested. If no plugin, returns 'wok'.
+    """
+    script_name = cherrypy.request.script_name
+    split = script_name.split('/')
+    if len(split) > 2 and split[1] == 'plugins':
+        return split[2]
+
+    return 'wok'
 
 
 def import_class(class_path):
@@ -334,6 +349,23 @@ def probe_file_permission_as_user(file, user):
     p.start()
     p.join()
     return queue.get()
+
+
+def remove_old_files(globexpr, hours):
+    """
+    Delete files matching globexpr that are older than specified hours.
+    """
+    minTime = datetime.now() - timedelta(hours=hours)
+
+    try:
+        for f in glob.glob(globexpr):
+            timestamp = os.path.getmtime(f)
+            fileTime = datetime.fromtimestamp(timestamp)
+
+            if fileTime < minTime:
+                os.remove(f)
+    except (IOError, OSError) as e:
+        wok_log.error(str(e))
 
 
 def get_next_clone_name(all_names, basename, name_suffix=''):
